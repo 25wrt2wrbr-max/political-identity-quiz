@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Political Identity — 28 Question Instrument</title>
+<style>
+  :root{
+    --bg:#0e1116;
+    --bg2:#151a22;
+    --card:#1b212b;
+    --line:#2a323f;
+    --fg:#e6e9ef;
+    --dim:#98a2b3;
+    --accent:#6ea8fe;
+    --accent2:#7ee0c0;
+    --warn:#f6c177;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 800px at 50% -10%,#1b2433 0%,var(--bg) 55%);
+    color:var(--fg);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}
+  header.top{text-align:center;padding:14px 0 26px}
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--dim);font-size:14px;margin:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+
+  /* progress */
+  .prog{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg) 70%,rgba(14,17,22,0));padding:14px 0 10px}
+  .prog .row{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--dim);margin-bottom:8px}
+  .bar{height:6px;background:#222a36;border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .3s ease}
+  .secs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .sec{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:99px;padding:3px 9px}
+  .sec.on{color:#0e1116;background:var(--accent2);border-color:transparent;font-weight:600}
+
+  .qhead{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent2);margin-bottom:8px}
+  h2.q{font-size:22px;line-height:1.3;margin:0 0 20px;font-weight:650}
+  ol.opts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  ol.opts button{
+    width:100%;text-align:left;background:var(--bg2);color:var(--fg);
+    border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;
+    font:inherit;font-size:15px;display:flex;gap:13px;align-items:flex-start;
+    transition:border-color .15s,background .15s,transform .08s;
+  }
+  ol.opts button:hover,.opts button:focus-visible{border-color:var(--accent);background:#1d2532;outline:none}
+  ol.opts button:active{transform:scale(.995)}
+  ol.opts button .k{
+    flex:0 0 26px;height:26px;border-radius:7px;background:#252d3a;color:var(--dim);
+    display:grid;place-items:center;font-size:12px;font-weight:700;margin-top:1px
+  }
+  ol.opts button.sel{border-color:var(--accent2);background:#182a2b}
+  ol.opts button.sel .k{background:var(--accent2);color:#0e1116}
+  .nav{display:flex;gap:10px;margin-top:22px;align-items:center}
+  button.btn{
+    background:var(--bg2);border:1px solid var(--line);color:var(--fg);border-radius:9px;
+    padding:10px 18px;font:inherit;font-size:14px;cursor:pointer
+  }
+  button.btn:hover{border-color:var(--accent)}
+  button.btn.primary{background:var(--accent);border-color:var(--accent);color:#08111f;font-weight:600}
+  button.btn.primary:hover{filter:brightness(1.08)}
+  button.btn:disabled{opacity:.4;cursor:not-allowed}
+  .hint{margin-left:auto;color:var(--dim);font-size:12px}
+
+  /* results */
+  .big{display:flex;gap:26px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+  .big .txt{flex:1 1 320px;min-width:280px}
+  .tagline{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .arch{font-size:30px;font-weight:700;letter-spacing:-.02em;margin:4px 0 8px;line-height:1.15}
+  .desc{color:var(--dim);font-size:15px}
+  .fit{font-size:13px;color:var(--accent2);margin-top:10px}
+  canvas{background:var(--bg2);border:1px solid var(--line);border-radius:14px}
+  .cvwrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .radarcap{font-size:11px;color:var(--dim);text-align:center;max-width:300px;line-height:1.5}
+  .axes{display:flex;flex-direction:column;gap:11px;margin:4px 0 0}
+  .ax .lab{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+  .ax .lab b{font-weight:600}
+  .ax .lab span{color:var(--dim);font-variant-numeric:tabular-nums}
+  .ax .track{position:relative;height:9px;background:#222a36;border-radius:99px;overflow:hidden}
+  .ax .mid{position:absolute;left:50%;top:0;bottom:0;width:1px;background:#3c475a}
+  .ax .fill{position:absolute;top:0;bottom:0;background:var(--accent)}
+  h3.sec-h{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin:30px 0 12px}
+  .driver{border-left:3px solid var(--accent2);padding:10px 14px;background:var(--bg2);border-radius:0 10px 10px 0;font-size:15px}
+  .alt{display:flex;flex-direction:column;gap:8px}
+  .alt div{display:flex;justify-content:space-between;gap:12px;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:10px 14px;font-size:14px}
+  .alt div span{color:var(--dim);font-variant-numeric:tabular-nums}
+  .note{font-size:13px;color:var(--dim);border-left:3px solid var(--warn);padding:8px 14px;background:#221e17;border-radius:0 10px 10px 0}
+  .warn{background:#241a17;border-left-color:#e0796b}
+  ul.caveats{font-size:13px;color:var(--dim);padding-left:20px;margin:8px 0}
+  .lr{display:flex;align-items:center;gap:12px;margin:6px 0 4px}
+  .lr .track{flex:1;height:12px;background:linear-gradient(90deg,#4b7fe0,#3a4252,#c05c5c);border-radius:99px;position:relative}
+  .lr .pin{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #0e1116;box-shadow:0 0 0 2px #fff}
+  .lr .ends{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin-top:4px}
+  .copy{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+  .foot{margin-top:34px;font-size:12px;color:#6b7686;text-align:center}
+  .hidden{display:none !important}
+  @media (max-width:560px){
+    h2.q{font-size:19px}
+    .arch{font-size:25px}
+    .wrap{padding:18px 14px 60px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="app"></div>
+
+<footer class="foot" id="foot">Answers stay in this browser only (localStorage). Nothing is sent anywhere. If storage is blocked, the questionnaire still works — it just won't remember your progress.</footer>
+</div>
+
+<script>
+/* ------------------------------------------------------------------ *
+ * DATA
+ * ------------------------------------------------------------------ */
+const AXES = {
+  E:{name:"Economics", lo:"Collectivist", hi:"Free-market"},
+  S:{name:"Social values", lo:"Progressive", hi:"Conservative"},
+  A:{name:"Authority", lo:"Anti-state", hi:"Statist / order"},
+  N:{name:"Nation & identity", lo:"Cosmopolitan", hi:"Nationalist"},
+  G:{name:"Environment", lo:"Growth-first", hi:"Green-first"},
+  P:{name:"Populism & trust", lo:"Technocratic", hi:"Populist"}
+};
+const AXIS_KEYS = Object.keys(AXES);
+
+/* ------------------------------------------------------------------ *
+ * ITEMS
+ *
+ * Every item is a situation, not a topic. Nothing here names an
+ * ideology, a party, a policy label, or an axis — the reader is meant
+ * to answer "what would I do here?", not "which side am I on?".
+ * Options are written so that each one is a defensible action someone
+ * might genuinely take; the axis loadings live in the codes after the
+ * pipe, which the reader never sees.
+ * ------------------------------------------------------------------ */
+const SECTIONS = [
+  {id:"econ", name:"Money & Work", qs:[
+    {t:"The business two doors down is doing well and paying almost nothing to the council. A proposal would close that gap by raising what they pay, and prices would go up with it.", o:[
+      "You'd back it without hesitation — the gap should close, and people can afford it|E-2",
+      "You'd back a gentler version of it, and accept some businesses will struggle|E-1",
+      "You'd rather they kept the advantage and competed on price|E+1",
+      "You'd oppose it — that money is better off with them and their customers|E+2 A-1"
+    ]},
+    {t:"Someone close to you is 55, out of work, and has a condition that needs seeing to. No insurance, no savings.", o:[
+      "You'd take them in and insist they get care regardless of who pays|E-2 A+1",
+      "You'd help them find whatever cover exists and apply for every program you can find|E-1",
+      "You'd help them buy a plan themselves and pay it out of pocket|E+1",
+      "You'd tell them this is what happens if you don't protect yourself while you can|E+2 A-1"
+    ]},
+    {t:"Your sister's hours were cut and she's short on rent this month. Something has to give.", o:[
+      "You'd help her, and push for money that arrives automatically with no hoops to jump through|E-2",
+      "You'd help her, and push for support she has to show she needs before she gets|E-1",
+      "You'd push for support tied to looking for work, with an end date on it|E+1",
+      "You'd give her what you can personally and leave the rest of it alone|E+2"
+    ]},
+    {t:"The council proposes a new service, paid for by borrowing money it doesn't have yet.", o:[
+      "You'd back it — borrowing is fine if the service is worth having|E-2 A+1",
+      "You'd back it, provided the numbers actually hold up|E-1",
+      "You'd want it scaled back so the hole doesn't get deeper|E+1",
+      "You'd want it dropped — there's already more than enough|E+2 A-1"
+    ]},
+    {t:"Someone you work with has been on a team for nine years and is now being edged out of it.", o:[
+      "You'd want everyone in the industry to have the same protection, so no one can be picked off|E-2 S-1",
+      "You'd want protection that depends on how much they've put in|E-1",
+      "You'd expect them to settle it themselves, or move on|E+1 S+1",
+      "You'd expect them to look after themselves — nobody owes anyone a job|E+2 S+1"
+    ]},
+    {t:"Something you buy is cheaper because it was made in another country. The equivalent made here costs 40% more.", o:[
+      "You'd buy the local one, or pay a duty to level the playing field|E-1 N+1",
+      "You'd buy the cheaper one, as long as the people who made it and the river it used were treated decently|E+1 S-1 G+1",
+      "You'd buy the cheapest one you can find|E+2 N-1",
+      "You'd buy local or make it yourself, whatever it costs|E-1 N+2"
+    ]}
+  ]},
+  {id:"social", name:"People & Family", qs:[
+    {t:"Two people you know want to get married, and the paperwork has become a mess.", o:[
+      "You'd help them cut through it, and want everyone else protected the same way|S-2",
+      "You'd help them sort it out|S-1",
+      "You'd wish them well, but think there are other ways for two people to be a family|S+1",
+      "You'd think the law should only recognise the arrangement you grew up seeing|S+2 N+1"
+    ]},
+    {t:"Someone you care about is pregnant and has decided she doesn't want to continue.", o:[
+      "You'd want the decision to be entirely hers, with no exceptions written in|S-2",
+      "You'd want it to be her call in most cases, with a few limits|S-1",
+      "You'd want it permitted only in narrow circumstances|S+1",
+      "You'd want it stopped, and you'd look for ways to help her raise the child|S+2 N+1"
+    ]},
+    {t:"A new colleague has moved here from somewhere else and is asking how to sort out their paperwork.", o:[
+      "You'd help them find the fastest route to being a full member of the community|S-1 N-1",
+      "You'd help them find whatever route is open to them|S0 N0",
+      "You'd tell them the rules are strict and there's not much anyone can do about it|S+2 N+2",
+      "You'd tell them the country isn't taking new arrivals|S+2 N+2"
+    ]},
+    {t:"A town hall is debating whether to keep a program that helps students from minority backgrounds.", o:[
+      "You'd push for stronger measures to actually close the gap, not just to keep the program running|S-1 N-1",
+      "You'd keep the program running as it is|S0 N0",
+      "You'd question whether it's needed, and who it's really meant for|S+1 N+2",
+      "You'd want decisions here to follow the makeup of the majority|S+2 N+2"
+    ]},
+    {t:"Your street has been broken into three times in a month.", o:[
+      "You'd want more spent on whatever caused it, and on repairing the harm afterwards|S-1 A-1",
+      "You'd want a mix of prevention, policing and sentencing|S0 A0",
+      "You'd want more officers on the street and longer sentences|A+1 S+1",
+      "You'd want forceful measures and less concern for how suspects are treated|A+2 S+1"
+    ]},
+    {t:"A friend buys a handgun from a market stall. No paperwork, no questions, no record.", o:[
+      "You'd want that stopped, and the ones already out there taken back|S-1",
+      "You'd want some kind of check before someone buys one|S0",
+      "You'd leave it alone — people should be able to protect themselves|S+1",
+      "You'd want the market stall to be the normal way to do it|S+2"
+    ]}
+  ]},
+  {id:"authority", name:"Rules & Power", qs:[
+    {t:"Your street needs something changed that everyone agrees on, but nobody currently has the power to change it.", o:[
+      "You'd gather everyone affected and let them work it out between themselves|A-2",
+      "You'd take it to the council and let the normal process decide|A-1",
+      "You'd want whoever actually does the work to be the one leading it|A+1",
+      "You'd want one person able to sort it out without a committee|A+2"
+    ]},
+    {t:"Officials want to read everyone's messages without a judge signing off each time.", o:[
+      "You'd refuse to allow it, even if it slows investigations down|A-2",
+      "You'd allow it only with a judge's signature each time|A-1",
+      "You'd allow it in the cases where they say it's necessary|A+1",
+      "You'd allow it broadly — safety comes first|A+2"
+    ]},
+    {t:"A dispute in another country is escalating, and troops could be sent.", o:[
+      "You'd want no standing army, with everything handled by local police|A-2",
+      "You'd want a modest professional force under civilian control|A-1",
+      "You'd want a strong force, still under civilian control|A+1",
+      "You'd want the military to have room to act without being second-guessed|A+2"
+    ]},
+    {t:"A small change to the rules would make things slightly worse for most people and slightly better for you.", o:[
+      "You'd want the rule gone, and the decision left to each person next time|A-2",
+      "You'd want the rule changed, with an easy way to appeal it|A-1",
+      "You'd want a clear process that produces the same answer every time|A+1",
+      "You'd want it enforced strictly, whatever it costs other people|A+2"
+    ]}
+  ]},
+  {id:"nation", name:"Country & Identity", qs:[
+    {t:"An international body wants the power to set rules that your country follows directly.", o:[
+      "You'd accept that — decisions made by many countries are fairer than one|N-2 A-1",
+      "You'd cooperate, but keep the final say at home|N-1",
+      "You'd keep the final say at home, and cooperate when it suits you|N+1",
+      "You'd want decisions made here and nowhere else|N+2"
+    ]},
+    {t:"The national anthem plays before a match.", o:[
+      "You'd feel a bit embarrassed not to feel anything|N-2",
+      "You'd stand, mostly because everyone else does|N-1",
+      "You'd feel genuinely proud|N+1",
+      "You'd feel it's the most important thing about you|N+2"
+    ]},
+    {t:"The neighbourhood you grew up in is noticeably more diverse than it was ten years ago.", o:[
+      "You'd say it has made the place richer|N-1 S-1",
+      "You'd not really notice either way|N0 S0",
+      "You'd worry that some of what's been lost won't come back|N+1",
+      "You'd say the damage is already done|N+2"
+    ]}
+  ]},
+  {id:"env", name:"Land & Growth", qs:[
+    {t:"The factory in your town employs 300 people and empties into the river.", o:[
+      "You'd want it closed, and find another way to support those 300 workers|G+2 S-1",
+      "You'd want it cleaned up on a fixed schedule before it closes|G+1",
+      "You'd want better filters and no closure date at all|G0",
+      "You'd leave it alone — the jobs matter more|G-2"
+    ]},
+    {t:"Switching the power grid to renewables will raise your bill and occasionally cause outages.", o:[
+      "You'd accept both, because the switch is worth making|G+2 E-1",
+      "You'd accept a slower switch that spreads the cost out|G+1",
+      "You'd want the switch to happen only when it's reliable and affordable|G0",
+      "You'd want the bill and the lights to stay exactly as they are|G-2"
+    ]},
+    {t:"A new fee gets added to the price of petrol and electricity.", o:[
+      "You'd support a large fee, with the money coming back to households|G+2",
+      "You'd support a small fee that goes up slowly|G+1",
+      "You'd rather rely on companies to cut emissions if they want to|G0",
+      "You'd rather petrol and electricity stay cheap|G-2"
+    ]},
+    {t:"Your town's market is covered in packaging designed to be thrown away.", o:[
+      "You'd want it banned, even if producers and shopkeepers carry the cost|G+2",
+      "You'd want it taxed, with alternatives required|G+1",
+      "You'd leave it to the shops and their customers to sort out|G0",
+      "You'd not bother — it isn't one of the real problems|G-2"
+    ]}
+  ]},
+  {id:"pop", name:"Trust & Voice", qs:[
+    {t:"A policy will leave you worse off, but it is backed by people who know more about it than you do.", o:[
+      "You'd back it anyway, because they know more than you do|P-2",
+      "You'd back it if the evidence holds up when you look at it|P-1",
+      "You'd want it decided by the people it affects, not by the people who study it|P+1",
+      "You'd want someone outside the usual circle to decide|P+2"
+    ]},
+    {t:"You've worked out that a policy most people are excited about is actually wrong.", o:[
+      "You'd say so plainly, even if it costs you standing|P-2",
+      "You'd raise it carefully and look for a way forward everyone can accept|P0",
+      "You'd make your case in the language people already use|P+1",
+      "You'd point to who pushed it and why they got it wrong|P+2"
+    ]},
+    {t:"A news story contradicts something you already believe.", o:[
+      "You'd check the original reporting before dismissing it|P-2",
+      "You'd read it, with some caution about the source|P-1",
+      "You'd look for how people you trust are describing it|P+1",
+      "You'd assume the mainstream framing is the error and stop there|P+2"
+    ]},
+    {t:"A court rules against a law that most people where you live are strongly in favour of.", o:[
+      "You'd leave it to them — the point of a court is that it can say no to everyone, including you|P-2",
+      "You'd leave it, as long as the rights of minorities stay protected|P-1",
+      "You'd accept it, but keep pushing for oversight|P0",
+      "You'd want it replaced by something people control directly|P+2"
+    ]},
+    {t:"You've been asked to lead a group project.", o:[
+      "You'd want everyone to agree before anyone moves|P-2",
+      "You'd gather views and then decide|P0",
+      "You'd set the direction yourself and keep moving|P+1",
+      "You'd take charge of both the direction and the pace|P+2"
+    ]}
+  ]}
+];
+
+/* flatten */
+const QUESTIONS = [];
+SECTIONS.forEach((sec, si) => sec.qs.forEach(q => {
+  QUESTIONS.push({
+    sec, si,
+    t: q.t,
+    o: q.o.map(s => {
+      const parts = s.split("|");
+      const codes = {};
+      parts[1].trim().split(/\s+/).forEach(c => {
+        // sign is required for non-zero; "S0" means "neutral on this axis"
+        const m = c.match(/^([ESANGP])([+-]?\d)$/);
+        if (m) codes[m[1]] = parseInt(m[2],10);
+      });
+      return {label: parts[0].trim(), codes};
+    })
+  });
+}));
+
+/* Archetypes.
+   The vectors are CALIBRATED centroids: each one was derived by searching the
+   answer space for the profile the questions can actually produce, so every
+   archetype is genuinely reachable rather than an abstract ideal. */
+const ARCHETYPES = [
+  {n:"Anarcho-Capitalist / Voluntaryist",
+   d:"Your instinct is that the state is the problem: property rights, voluntary exchange, and individual consent should carry the weight, with politics as a last resort.",
+   v:{E:86,S:-20,A:-72,N:-37,G:0,P:-50}},
+  {n:"Libertarian",
+   d:"Market economics and individual liberty are your load-bearing values, with a strong suspicion of concentrated power — including in the private sector.",
+   v:{E:71,S:-25,A:-50,N:-19,G:0,P:-30}},
+  {n:"Paleolibertarian / Libertarian-Conservative",
+   d:"You want free markets and limited government, but also traditional social order — a low-tax society with strong families, local authority, and restrained immigration.",
+   v:{E:64,S:50,A:-22,N:31,G:0,P:0}},
+  {n:"Green Nationalist / Eco-Authoritarian",
+   d:"Environmental protection is central, and you are willing to impose it firmly — on individuals, on industry, and on the shape of national life.",
+   v:{E:36,S:45,A:50,N:56,G:70,P:20}},
+  {n:"National Conservative",
+   d:"National identity, traditional values, and strong institutions are the core. You are sceptical of elites, internationalism, and rapid social change.",
+   v:{E:36,S:60,A:50,N:81,G:0,P:20}},
+  {n:"Traditionalist Conservative",
+   d:"You want a smaller, slower-changing society: stable families, local institutions, restrained government, and continuity over novelty.",
+   v:{E:50,S:50,A:22,N:31,G:0,P:0}},
+  {n:"Populist Right",
+   d:"Sovereignty, border control, and deference to ordinary people over elites define you. Institutions are legitimate only when they serve the nation.",
+   v:{E:14,S:45,A:33,N:63,G:10,P:70}},
+  {n:"Populist Left",
+   d:"You are an economic redistributionist who distrusts both corporate power and top-down institutions — and you'd rather organise directly than appeal to authority.",
+   v:{E:-64,S:-35,A:-22,N:-19,G:0,P:-60}},
+  {n:"Revolutionary Socialist / Left-Populist",
+   d:"You want deep economic transformation, not adjustment within the system — and you think it takes mass mobilisation and a direct challenge to existing power.",
+   v:{E:-79,S:-45,A:-22,N:-31,G:0,P:-80}},
+  {n:"Social Democrat / Progressive",
+   d:"You want a strong public sector, deep social equality, and government strong enough to deliver — with institutions trusted over populist appeals.",
+   v:{E:-50,S:-45,A:22,N:-25,G:30,P:-30}},
+  {n:"Progressive Activist",
+   d:"Your axis is social: inclusion, rights, and equal outcomes, with the economy treated as a tool rather than an end.",
+   v:{E:-36,S:-55,A:6,N:-31,G:50,P:0}},
+  {n:"Green Left",
+   d:"Ecology and inequality are fused: ecological limits set the frame, and you want them solved through public ownership and regulation.",
+   v:{E:-57,S:-35,A:22,N:-19,G:80,P:-20}},
+  {n:"Democratic Socialist",
+   d:"Economic democracy is the core commitment: public ownership of the commanding heights, deep redistribution, and strong labour power.",
+   v:{E:-86,S:-50,A:22,N:-25,G:20,P:-20}},
+  {n:"Centrist / Technocratic",
+   d:"You are not driven by any single axis. You weight evidence, institutions, and competence, and your answers stay close to the middle on most questions.",
+   v:{E:-7,S:0,A:-6,N:-19,G:0,P:-30}},
+  {n:"Left-Populist / Class-Economic",
+   d:"You want aggressive redistribution and economic intervention, and you reach for it through movements and mass politics rather than technocratic management.",
+   v:{E:-57,S:-30,A:-11,N:-25,G:0,P:70}},
+  {n:"Left-Libertarian / Anarchist",
+   d:"You want both economic equality and freedom from the state — decentralised, cooperative, anti-authoritarian.",
+   v:{E:-50,S:-35,A:-50,N:-19,G:30,P:-20}}
+];
+
+const WEIGHTS = {E:1.25,S:1.25,A:1.0,N:1.0,G:0.8,P:1.0};
+
+/* how many questions feed each axis (shown in results as a reliability cue) */
+const AXIS_ITEMS = {};
+const AXIS_QS = {};
+AXIS_KEYS.forEach(k => {
+  AXIS_QS[k] = QUESTIONS.map((q,i)=>q.o.some(o=>o.codes[k]!==undefined)?i:-1).filter(i=>i>=0);
+  AXIS_ITEMS[k] = AXIS_QS[k].length;
+});
+
+/* ------------------------------------------------------------------ *
+ * STATE
+ * ------------------------------------------------------------------ */
+const KEY = "piq-answers-v1";
+let answers = load();
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; }
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(answers)); }catch(e){} }
+function answeredCount(){ return Object.keys(answers).length; }
+
+/* ------------------------------------------------------------------ *
+ * SCORING
+ * ------------------------------------------------------------------ */
+function score(){
+  const sums = {}, counts = {};
+  AXIS_KEYS.forEach(k => { sums[k]=0; counts[k]=0; });
+  // An axis is computed over EVERY question that loads it, whether or not the
+  // chosen option happens to code that axis. An option with no code for an
+  // axis is neutral on it (0), not "missing" — otherwise the denominator
+  // would shift with the answers and the score would drift.
+  AXIS_KEYS.forEach(k => {
+    AXIS_QS[k].forEach(qi => {
+      const a = answers[qi];
+      if (a === undefined) return;
+      const codes = QUESTIONS[qi].o[a].codes;
+      sums[k] += (codes[k] !== undefined ? codes[k] : 0);
+      counts[k]++;
+    });
+  });
+  const raw = {};
+  AXIS_KEYS.forEach(k => { raw[k] = counts[k] ? (sums[k]/counts[k])*50 : 0; });
+  // reliability factor per axis: axes fed by fewer items get less say.
+  // sf = 1 when an axis is fully answered; lower for thinly-measured axes.
+  const sf = {};
+  AXIS_KEYS.forEach(k => { const n = counts[k]||0; sf[k] = n ? (n/(n+4)) : 0; });
+  // archetype fit: weighted euclidean closeness, down-weighting thinly-measured axes
+  const scored = ARCHETYPES.map(a => {
+    let d=0, tw=0;
+    AXIS_KEYS.forEach(k => {
+      const w = WEIGHTS[k] * sf[k]*sf[k];
+      d += w * Math.pow(raw[k]-a.v[k],2);
+      tw += w;
+    });
+    const dist = Math.sqrt(d/tw);
+    return {n:a.n, d:a.d, dist, v:a.v};
+  }).sort((x,y)=> x.dist - y.dist);
+  const d0 = scored[0].dist;
+  const d1 = scored[1].dist;
+  const gap = d1 - d0;
+  // How decisive is the match? Judged by how far the winner pulls ahead of
+  // the runner-up, not by raw distance (an extreme profile is *further* from
+  // every archetype, but can still match one very clearly).
+  const strengthLabel = gap >= 12 ? "clear" : gap >= 5 ? "close" : "contested";
+  const strength = Math.max(0, Math.min(99, Math.round(100*Math.exp(-d0/95))));
+  const ranked = scored.map(a => ({
+    n:a.n, d:a.d, v:a.v,
+    fit: Math.max(0, Math.round(100*Math.exp(-(a.dist-d0)/30))),
+    strength: a.dist===d0 ? strength : null
+  }));
+  // dominant axis: rank on the reliability-adjusted score
+  let dom = AXIS_KEYS[0], dv = -1;
+  AXIS_KEYS.forEach(k => { const s = raw[k]*sf[k]; if (Math.abs(s) > Math.abs(dv)){ dv = s; dom = k; } });
+  // left/right composite
+  const lr = Math.round(((raw.E + raw.S)/2));
+  // divided profile detection
+  let divided = null;
+  if (raw.E > 40 && raw.S < -30) divided = "economically free-market but socially liberal";
+  else if (raw.E < -40 && raw.S > 30) divided = "economically statist but socially conservative";
+  else if (raw.A > 40 && raw.P < -30) divided = "authoritarian on order, but trusting of experts";
+  else if (raw.N > 40 && raw.P > 40) divided = "nationalist and populist — sovereignty-first";
+  else if (raw.G > 40 && raw.E > 30) divided = "green on the environment but market-friendly on economics";
+  return {raw, ranked, dom, domVal:dv, lr, divided, strength, strengthLabel, sf, counts};
+}
+
+/* ------------------------------------------------------------------ *
+ * UI
+ * ------------------------------------------------------------------ */
+const app = document.getElementById("app");
+let view = "intro";      // intro | quiz | results
+let qi = 0;
+let allowPartial = false;
+
+function el(tag, cls, html){
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (html !== undefined) n.innerHTML = html;
+  return n;
+}
+function bar(pct, cls){
+  const b = el("div","bar"); const i = document.createElement("i");
+  i.style.width = pct+"%"; b.appendChild(i); return b;
+}
+
+function render(){
+  app.innerHTML = "";
+  if (view === "intro") return renderIntro();
+  if (view === "quiz") return renderQuiz();
+  return renderResults();
+}
+
+/* ---- intro ---- */
+function renderIntro(){
+  const done = answeredCount();
+  const w = el("div");
+  w.appendChild(el("header","top",
+    `<h1>Political Identity Instrument</h1>
+     <p class="sub">${QUESTIONS.length} situations. You get a profile, not a label.</p>`));
+  const c = el("div","card");
+  c.innerHTML = `
+    <h2 class="q">How this works</h2>
+    <p style="color:var(--dim);margin-top:0">
+      Every item is a situation rather than a topic. You'll be given something that
+      happened — to a neighbour, a relative, a colleague, a street — and four things
+      someone might do about it. There are no right answers and no trick options.
+    </p>
+    <p style="color:var(--dim)">
+      Answer by what you would actually do, not by what you would say at a dinner
+      party. Nobody will see your individual answers, and the questions are written
+      so that reading them carefully cannot tell you what the instrument wants from you.
+      Answering all ${QUESTIONS.length} produces a profile across several dimensions,
+      a dominant driver, and a ranked set of matching political archetypes.
+    </p>
+    <p style="color:var(--dim)">
+      A moderate, mixed result is a real result, not a failure.
+    </p>`;
+  const nav = el("div","nav");
+  const start = el("button","btn primary", done ? `Resume — ${done} answered` : "Start questionnaire");
+  start.onclick = () => {
+    qi = done ? (firstUnanswered()) : 0;
+    view = "quiz"; render();
+  };
+  nav.appendChild(start);
+  if (done){
+    const reset = el("button","btn","Start over");
+    reset.onclick = () => { answers={}; save(); qi=0; view="quiz"; render(); };
+    nav.appendChild(reset);
+  }
+  nav.appendChild(el("div","hint","Tip: press 1–4 to answer, ← → to navigate"));
+  c.appendChild(nav);
+  w.appendChild(c);
+  app.appendChild(w);
+}
+function firstUnanswered(){
+  for (let i=0;i<QUESTIONS.length;i++) if (answers[i]===undefined) return i;
+  return 0;
+}
+
+/* ---- quiz ---- */
+function renderQuiz(){
+  const done = answeredCount();
+  const w = el("div");
+  w.appendChild(el("header","top",
+    `<h1>Political Identity Instrument</h1>
+     <p class="sub">Pick the option that reads like you. Don't guess what it's testing.</p>`));
+
+  const p = el("div","prog");
+  const row = el("div","row");
+  row.innerHTML = `<span>Question ${qi+1} of ${QUESTIONS.length} · ${SECTIONS[QUESTIONS[qi].si].name}</span><span>${done} answered</span>`;
+  p.appendChild(row);
+  p.appendChild(bar(done/QUESTIONS.length*100));
+  const secs = el("div","secs");
+  SECTIONS.forEach((s,i)=>{
+    const d = el("div","sec"+(i===QUESTIONS[qi].si?" on":""), s.name);
+    secs.appendChild(d);
+  });
+  p.appendChild(secs);
+  w.appendChild(p);
+
+  const q = QUESTIONS[qi];
+  const c = el("div","card");
+  c.appendChild(el("div","qhead", SECTIONS[q.si].name));
+  c.appendChild(el("h2","q", q.t));
+  const ol = el("ol","opts");
+  q.o.forEach((opt, i) => {
+    const b = el("button", answers[qi]===i ? "sel" : "");
+    b.innerHTML = `<span class="k">${i+1}</span><span>${opt.label}</span>`;
+    b.onclick = () => pick(i);
+    ol.appendChild(b);
+  });
+  c.appendChild(ol);
+
+  const nav = el("div","nav");
+  const back = el("button","btn","← Back");
+  back.disabled = qi===0;
+  back.onclick = () => { qi=Math.max(0,qi-1); render(); };
+  nav.appendChild(back);
+
+  if (qi===QUESTIONS.length-1){
+    const fin = el("button","btn primary","See my results →");
+    fin.onclick = () => { view="results"; render(); };
+    nav.appendChild(fin);
+  }
+  const skip = el("button","btn","Skip");
+  skip.onclick = () => { qi=Math.min(QUESTIONS.length-1,qi+1); render(); };
+  nav.appendChild(skip);
+  nav.appendChild(el("div","hint","Press 1–4 to choose"));
+  c.appendChild(nav);
+  w.appendChild(c);
+  app.appendChild(w);
+}
+
+function pick(i){
+  answers[qi] = i; save();
+  if (qi < QUESTIONS.length-1){ qi++; render(); }
+  else { view="results"; render(); }
+}
+
+/* ---- results ---- */
+function renderResults(){
+  const missing = QUESTIONS.length - answeredCount();
+  if (missing > 0 && !allowPartial){
+    const w = el("div");
+    w.appendChild(el("header","top",
+      `<h1>Political Identity Instrument</h1>
+       <p class="sub">${missing} question${missing>1?"s":""} still unanswered</p>`));
+    const c = el("div","card");
+    c.innerHTML = `<h2 class="q">Finish the questionnaire for a full profile</h2>
+      <p style="color:var(--dim)">Your results right now would be partial, and the thinner axes would carry less weight.</p>`;
+    const nav = el("div","nav");
+    const go = el("button","btn primary","Continue");
+    go.onclick = () => { qi=firstUnanswered(); view="quiz"; render(); };
+    nav.appendChild(go);
+    const see = el("button","btn","See partial results anyway");
+    see.onclick = () => { allowPartial = true; view="results"; render(); };
+    nav.appendChild(see);
+    c.appendChild(nav);
+    w.appendChild(c);
+    app.appendChild(w);
+    return;
+  }
+
+  const s = score();
+  const w = el("div");
+  w.appendChild(el("header","top",
+    `<h1>Your Political Identity Profile</h1>
+     <p class="sub">${missing > 0 ? "Partial results — " + missing + " question" + (missing>1?"s":"") + " unanswered" : "Based on all " + QUESTIONS.length + " answers"}</p>`));
+
+  // headline
+  const head = el("div","card");
+  const big = el("div","big");
+  const txt = el("div","txt");
+  txt.innerHTML = `<div class="tagline">Your closest match</div>
+     <div class="arch">${s.ranked[0].n}</div>
+     <div class="desc">${s.ranked[0].d}</div>
+     <div class="fit">${s.strengthLabel} match · runner-up: ${s.ranked[1].n} (${s.ranked[1].fit}% as close)</div>`;
+  big.appendChild(txt);
+  const cv = document.createElement("canvas");
+  cv.width = 340; cv.height = 340; cv.style.width="340px"; cv.style.height="340px";
+  const cap = el("div","radarcap",
+    "Shape shows how strongly each axis leans.<br>Vertex colour shows direction: <span style='color:#7ee0c0'>teal</span> toward the right-hand pole, <span style='color:#6ea8fe'>blue</span> toward the left-hand pole.");
+  const cvwrap = el("div","cvwrap");
+  cvwrap.appendChild(cv);
+  cvwrap.appendChild(cap);
+  big.appendChild(cvwrap);
+  head.appendChild(big);
+
+  // left-right
+  const lr = el("div");
+  lr.innerHTML = `<h3 class="sec-h">Overall left–right placement</h3>`;
+  const lrw = el("div","lr");
+  const track = el("div","track");
+  const pin = el("div","pin");
+  pin.style.left = ((s.lr+100)/200*100)+"%";
+  track.appendChild(pin); lrw.appendChild(track);
+  lr.appendChild(lrw);
+  lr.appendChild(el("div","ends","<span>Left</span><span>Centre</span><span>Right</span>"));
+  const lrLabel = s.lr < -50 ? "Strongly left" : s.lr < -15 ? "Left of centre" : s.lr <= 15 ? "Centrist" : s.lr <= 50 ? "Right of centre" : "Strongly right";
+  lr.appendChild(el("div","fit", `Composite of the economic and social axes: ${lrLabel} (${s.lr > 0 ? "+" : ""}${s.lr}).`));
+  head.appendChild(lr);
+  w.appendChild(head);
+
+  // axes
+  const axc = el("div","card"); axc.style.marginTop="16px";
+  axc.appendChild(el("h3","sec-h","Axis scores"));
+  const axes = el("div","axes");
+  AXIS_KEYS.forEach(k => {
+    const v = s.raw[k];
+    const row = el("div","ax");
+    row.innerHTML = `<div class="lab"><b>${AXES[k].name}</b><span>${v>0?"+":""}${Math.round(v)} · ${AXES[k].lo} ↔ ${AXES[k].hi} · ${AXIS_ITEMS[k]} item${AXIS_ITEMS[k]>1?"s":""}</span></div>`;
+    const t = el("div","track");
+    const mid = el("div","mid"); t.appendChild(mid);
+    const f = el("div","fill");
+    const pct = Math.abs(v)/100*50;
+    if (v>=0){ f.style.left="50%"; f.style.width=pct+"%"; f.style.background="var(--accent2)"; }
+    else { f.style.left=(50-pct)+"%"; f.style.width=pct+"%"; f.style.background="var(--accent)"; }
+    t.appendChild(f);
+    row.appendChild(t);
+    axes.appendChild(row);
+  });
+  axc.appendChild(axes);
+  w.appendChild(axc);
+
+  // driver
+  const dc = el("div","card"); dc.style.marginTop="16px";
+  dc.appendChild(el("h3","sec-h","Your strongest driver"));
+  const k = s.dom;
+  const dv = Math.round(s.raw[k]);
+  const dir = dv > 0 ? AXES[k].hi : AXES[k].lo;
+  // how decisively does this axis stand out from the others?
+  const others = AXIS_KEYS.filter(x=>x!==k).map(x=>Math.abs(s.raw[x]*s.sf[x]));
+  const second = others.length ? Math.max(...others) : 0;
+  const lead = Math.abs(s.raw[k]*s.sf[k]) - second;
+  // how many axes are strongly leaned on?
+  const strong = AXIS_KEYS.filter(x=>Math.abs(s.raw[x]) >= 40);
+  let tail;
+  if (lead >= 15){
+    tail = `It pulls clearly ahead of every other axis, which means <i>${AXES[k].name.toLowerCase()}</i>
+     is the lens through which you evaluate most other issues — when the other five come into tension, this is the one you fall back on.`;
+  } else if (strong.length >= 3){
+    const nice = x => AXES[x].name.toLowerCase().replace(/ & /g, " and ");
+    const names = strong.length >= 4
+      ? "every axis"
+      : strong.map(nice).join(", ");
+    tail = `This is a <b>coherent multi-axis profile</b>, not a single-issue one — ${names} ${strong.length>=4?"leans":"lean"} hard
+     in a compatible direction. No single axis dominates, but they reinforce each other, which is why the archetype
+     match above is sharper than any one score suggests.`;
+  } else if (strong.length === 2){
+    const names = strong.map(x=>AXES[x].name.toLowerCase()).join(" and ");
+    tail = `Two axes carry the profile: <b>${names}</b>. The other four sit near the middle, so this is a
+     two-pillar identity rather than a broad-spectrum one.`;
+  } else {
+    tail = `No single axis dominates, and most axes sit near the middle. You are an <b>issue-by-issue</b>
+     profile — you weigh each question on its own merits rather than applying one consistent prior.`;
+  }
+  dc.appendChild(el("div","driver",
+    `Your most decisive axis is <b>${AXES[k].name}</b>, pulling <b>${dir}</b> (${dv>0?"+":""}${dv}).
+     ${tail}`));
+  if (s.divided){
+    dc.appendChild(el("div","note",
+      `<b>Split profile:</b> you are ${s.divided}. This is the most politically distinctive position in the
+       instrument and the one most often flattened into a single label. Do not average it away.`));
+  }
+  w.appendChild(dc);
+
+  // alternatives
+  const ac = el("div","card"); ac.style.marginTop="16px";
+  ac.appendChild(el("h3","sec-h","Other archetypes you resemble"));
+  const alt = el("div","alt");
+  s.ranked.slice(1,6).forEach(a => {
+    const d = el("div");
+    d.innerHTML = `<span>${a.n}</span><span>${a.fit}% as close</span>`;
+    alt.appendChild(d);
+  });
+  ac.appendChild(alt);
+  w.appendChild(ac);
+
+  // caveats
+  const cc = el("div","card"); cc.style.marginTop="16px";
+  cc.appendChild(el("h3","sec-h","How to read this"));
+  cc.appendChild(el("div","note warn",
+    `The questions are written as situations rather than statements on purpose: it is much harder to
+     answer "what would I do here?" in a way that flatters you than to pick a side on an abstract question.
+     Even so, this measures <b>what you say you would do</b>, not what you would do. People vote their
+     interests and pressures more often than their principles. Treat the profile as a starting hypothesis
+     about yourself, not a verdict.`));
+  const ul = el("ul","caveats");
+  ul.innerHTML = `
+    <li>The wording is 2026 Western Anglophone framing. Run it on someone in a different national context and the axes mean different things.</li>
+    <li>Each axis is averaged from a handful of items, so small swings move the numbers more than you might expect. The archetype ranking is more stable than the exact scores.</li>
+    <li>A near-centrist profile is common and legitimate — it usually means you weigh trade-offs issue by issue rather than from a prior.</li>`;
+  cc.appendChild(ul);
+  w.appendChild(cc);
+
+  // actions
+  const acts = el("div","copy");
+  const again = el("button","btn primary","Retake the questionnaire");
+  again.onclick = () => { answers={}; save(); qi=0; view="quiz"; render(); };
+  acts.appendChild(again);
+  const copyBtn = el("button","btn","Copy summary");
+  copyBtn.onclick = () => {
+    const txt = buildSummary(s);
+    navigator.clipboard.writeText(txt).then(()=>{ copyBtn.textContent="Copied ✓"; setTimeout(()=>copyBtn.textContent="Copy summary",1800); });
+  };
+  acts.appendChild(copyBtn);
+  const backQ = el("button","btn","← Review answers");
+  backQ.onclick = () => { qi=0; view="quiz"; render(); };
+  acts.appendChild(backQ);
+  w.appendChild(acts);
+
+  app.appendChild(w);
+  drawRadar(cv, s);
+}
+
+function buildSummary(s){
+  const lines = [];
+  lines.push("POLITICAL IDENTITY PROFILE");
+  lines.push("=".repeat(40));
+  lines.push(`Closest match: ${s.ranked[0].n} (${s.strengthLabel} match)`);
+  lines.push(`Runner-up: ${s.ranked[1].n} (${s.ranked[1].fit}% as close)`);
+  lines.push("");
+  lines.push("AXIS SCORES");
+  AXIS_KEYS.forEach(k => {
+    const v = Math.round(s.raw[k]);
+    lines.push(`  ${AXES[k].name.padEnd(22)} ${(v>0?"+":"")+v}   [${AXES[k].lo} ↔ ${AXES[k].hi}]`);
+  });
+  lines.push("");
+  lines.push(`Strongest driver: ${AXES[s.dom].name} (${s.raw[s.dom]>0?"+":""}${Math.round(s.raw[s.dom])})`);
+  lines.push(`Left–right composite: ${s.lr>0?"+":""}${s.lr}`);
+  if (s.divided) lines.push(`Split profile: ${s.divided}`);
+  lines.push("");
+  lines.push("Other matches (% as close to your closest match):");
+  s.ranked.slice(1,6).forEach(a => lines.push(`  ${a.n} — ${a.fit}%`));
+  lines.push("");
+  lines.push("Measures what you say you would do, not what you would do. Use as a hypothesis, not a verdict.");
+  return lines.join("\n");
+}
+
+/* ---- radar ---- */
+function drawRadar(cv, s){
+  const ctx = cv.getContext("2d");
+  const W = cv.width, H = cv.height;
+  const cx = W/2, cy = H/2 + 6, R = Math.min(W,H)/2 - 58;
+  const n = AXIS_KEYS.length;
+  const ang = i => (-Math.PI/2) + (2*Math.PI*i/n);
+
+  // radius encodes INTENSITY (0 at centre, 100 at edge); the printed sign and
+  // the vertex colour encode direction. This keeps "no lean" at the centre
+  // instead of making everyone look half-leaning.
+  const pt = (i,v) => {
+    const r = (Math.abs(v)/100)*R;
+    return [cx + Math.cos(ang(i))*r, cy + Math.sin(ang(i))*r];
+  };
+
+  ctx.clearRect(0,0,W,H);
+
+  // grid rings at 25 / 50 / 75 / 100
+  [25,50,75,100].forEach(rp => {
+    ctx.beginPath();
+    for (let i=0;i<=n;i++){
+      const [x,y] = pt(i% n, rp);
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = rp===100 ? "#39445a" : "#2a323f";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+  // spokes
+  for (let i=0;i<n;i++){
+    const [x,y] = pt(i, 100);
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y);
+    ctx.strokeStyle="#252c38"; ctx.stroke();
+  }
+  // centre
+  ctx.beginPath(); ctx.arc(cx,cy,2.5,0,Math.PI*2);
+  ctx.fillStyle="#4a5568"; ctx.fill();
+
+  // polygon
+  ctx.beginPath();
+  AXIS_KEYS.forEach((k,i)=>{
+    const [x,y] = pt(i, s.raw[k]);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  // tint the fill by the dominant direction so a left-lean and a right-lean
+  // of the same magnitude are visually distinguishable
+  const domSign = Math.sign(s.raw[s.dom]) || 1;
+  const g = ctx.createLinearGradient(cx-R,cy-R,cx+R,cy+R);
+  if (domSign > 0){
+    g.addColorStop(0,"rgba(110,168,254,0.28)");
+    g.addColorStop(1,"rgba(126,224,192,0.40)");
+  } else {
+    g.addColorStop(0,"rgba(126,224,192,0.40)");
+    g.addColorStop(1,"rgba(110,168,254,0.28)");
+  }
+  ctx.fillStyle=g; ctx.fill();
+  ctx.strokeStyle="#9fd8ff"; ctx.lineWidth=1.8; ctx.stroke();
+
+  // vertices + labels
+  AXIS_KEYS.forEach((k,i)=>{
+    const v = s.raw[k];
+    const [x,y] = pt(i, v);
+    ctx.beginPath(); ctx.arc(x,y,3.6,0,Math.PI*2);
+    ctx.fillStyle = v>=0 ? "#7ee0c0" : "#6ea8fe";
+    ctx.fill();
+    // label at outer edge
+    const lx = cx + Math.cos(ang(i))*(R+30), ly = cy + Math.sin(ang(i))*(R+30);
+    ctx.font = "600 11px -apple-system, system-ui, sans-serif";
+    ctx.fillStyle = "#98a2b3";
+    ctx.textAlign = Math.abs(Math.cos(ang(i))) < 0.2 ? "center" : (Math.cos(ang(i))>0 ? "left" : "right");
+    ctx.textBaseline = Math.abs(Math.sin(ang(i))) < 0.2 ? "middle" : (Math.sin(ang(i))>0 ? "top" : "bottom");
+    const short = {E:"Econ",S:"Social",A:"Auth",N:"Nation",G:"Env",P:"Popul"}[k];
+    ctx.fillText(short, lx, ly);
+    ctx.font = "700 12px -apple-system, system-ui, sans-serif";
+    ctx.fillStyle = "#e6e9ef";
+    ctx.fillText((v>0?"+":"")+Math.round(v), lx, ly + (Math.abs(Math.sin(ang(i)))<0.2?14:(Math.sin(ang(i))>0?14:-18)));
+  });
+}
+
+/* ---- keyboard ---- */
+document.addEventListener("keydown", e => {
+  if (view !== "quiz") return;
+  if (["INPUT","TEXTAREA"].includes(e.target.tagName)) return;
+  if (e.key >= "1" && e.key <= "4"){
+    const i = parseInt(e.key,10)-1;
+    if (QUESTIONS[qi].o[i]){ e.preventDefault(); pick(i); }
+  } else if (e.key === "ArrowRight"){
+    e.preventDefault(); qi = Math.min(QUESTIONS.length-1, qi+1); render();
+  } else if (e.key === "ArrowLeft"){
+    e.preventDefault(); qi = Math.max(0, qi-1); render();
+  } else if (e.key === "Enter"){
+    if (qi === QUESTIONS.length-1){ view="results"; render(); }
+  }
+});
+
+render();
+</script>
+</body>
+</html>
